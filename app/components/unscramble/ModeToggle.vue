@@ -23,14 +23,14 @@ function trySwitch(newMode: GameMode) {
 <template>
   <div class="flex rounded-lg overflow-hidden border border-slate-300 text-sm font-semibold">
     <button
-      class="px-4 py-1.5 transition-colors"
+      class="px-4 py-2.5 transition-colors"
       :class="mode === 'normal' ? 'bg-indigo-500 text-white' : 'bg-white text-slate-500'"
       @click="trySwitch('normal')"
     >
       Normal
     </button>
     <button
-      class="px-4 py-1.5 transition-colors"
+      class="px-4 py-2.5 transition-colors"
       :class="mode === 'hard' ? 'bg-rose-500 text-white' : 'bg-white text-slate-500'"
       @click="trySwitch('hard')"
     >

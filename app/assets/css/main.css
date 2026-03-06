@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Mobile touch improvements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, a {
+  touch-action: manipulation;
+}
+
+/* Prevent pull-to-refresh / overscroll bounce on iOS */
+html, body {
+  overscroll-behavior: none;
+}
+
 @keyframes pop {
   0%   { transform: scale(0.8); }
   50%  { transform: scale(1.12); }

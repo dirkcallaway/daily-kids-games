@@ -37,7 +37,7 @@ const emit = defineEmits<{
       <p class="text-sm text-slate-400 text-center">Come back tomorrow for a new word!</p>
 
       <button
-        class="w-full py-2 rounded-lg bg-slate-100 text-slate-600 font-semibold text-sm"
+        class="w-full py-3 rounded-lg bg-slate-100 text-slate-600 font-semibold text-sm"
         @click="emit('close')"
       >
         Close
