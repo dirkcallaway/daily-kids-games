@@ -6,5 +6,5 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   vite: { plugins: [tailwindcss() as any] },
   css: ['~/assets/css/main.css'],
-  app: { head: { title: 'Daily Kids Games' } }
+  app: { head: { title: 'Daily Kids Games' } },
 })
