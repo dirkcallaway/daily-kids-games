@@ -3,10 +3,12 @@ import type { GameMode } from '~/types/game';
 import { useGameState } from '~/composables/useGameState';
 import { useWordOfDay } from '~/composables/useWordOfDay';
 import { useStats } from '~/composables/useStats';
+import { useConfetti } from '~/composables/useConfetti';
 
 const { state, initGame, placeTile, removeLast, submitGuess, useHint, } = useGameState();
 const { wordEntry, dateKey } = useWordOfDay();
 const { getStats } = useStats();
+const { launchFireworks } = useConfetti();
 
 const showModal = ref(false);
 const currentStats = ref(getStats());
@@ -15,6 +17,9 @@ watch(() => state.gameStatus, (status) => {
   if (status === 'won' || status === 'lost') {
     currentStats.value = getStats();
     setTimeout(() => { showModal.value = true; }, 600);
+  }
+  if (status === 'won') {
+    setTimeout(launchFireworks, 300);
   }
 });
 
