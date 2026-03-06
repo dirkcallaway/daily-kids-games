@@ -2,9 +2,21 @@
 import type { GameMode } from '~/types/game';
 import { useGameState } from '~/composables/useGameState';
 import { useWordOfDay } from '~/composables/useWordOfDay';
+import { useStats } from '~/composables/useStats';
 
 const { state, initGame, placeTile, removeLast, submitGuess } = useGameState();
 const { wordEntry, dateKey } = useWordOfDay();
+const { getStats } = useStats();
+
+const showModal = ref(false);
+const currentStats = ref(getStats());
+
+watch(() => state.gameStatus, (status) => {
+  if (status === 'won' || status === 'lost') {
+    currentStats.value = getStats();
+    setTimeout(() => { showModal.value = true; }, 600);
+  }
+});
 
 onMounted(() => {
   const savedMode = (localStorage.getItem('unscramble-mode-pref') ?? 'normal') as GameMode;
@@ -17,10 +29,13 @@ function switchMode(newMode: GameMode) {
 };
 
 const hasStarted = computed(() => state.guesses.length > 0);
+const gameResult = computed(() => state.gameStatus as 'won' | 'lost');
 
-const emptyRowCount = computed(() =>
-  Math.max(0, state.maxGuesses - state.guesses.length - 1)
-);
+
+const emptyRowCount = computed(() => {
+  const activeRowOffset = state.gameStatus === 'playing' ? 1 : 0;
+  return Math.max(0, state.maxGuesses - state.guesses.length - activeRowOffset);
+});
 
 const allSlotsFilled = computed(() =>
   state.currentGuess.every(v => v !== null)
@@ -108,6 +123,16 @@ const allSlotsFilled = computed(() =>
         Submit
       </button>
     </div>
+
+    <!-- Result modal -->
+    <UnscrambleResultModal
+      v-if="showModal && state.gameStatus !== 'playing'"
+      :status="gameResult"
+      :word="state.wordEntry.word"
+      :mode="state.mode"
+      :stats="currentStats"
+      @close="showModal = false"
+    />
 
   </div>
 </template>
