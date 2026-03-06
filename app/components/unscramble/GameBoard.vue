@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { GameMode } from '~/types/game';
 import { useGameState } from '~/composables/useGameState';
 import { useWordOfDay } from '~/composables/useWordOfDay';
 
@@ -6,8 +7,16 @@ const { state, initGame, placeTile, removeLast, submitGuess } = useGameState();
 const { wordEntry, dateKey } = useWordOfDay();
 
 onMounted(() => {
-  initGame('normal', wordEntry, dateKey);
+  const savedMode = (localStorage.getItem('unscramble-mode-pref') ?? 'normal') as GameMode;
+  initGame(savedMode, wordEntry, dateKey);
 });
+
+function switchMode(newMode: GameMode) {
+  localStorage.setItem('unscramble-mode-pref', newMode);
+  initGame(newMode, wordEntry, dateKey);
+};
+
+const hasStarted = computed(() => state.guesses.length > 0);
 
 const emptyRowCount = computed(() =>
   Math.max(0, state.maxGuesses - state.guesses.length - 1)
@@ -22,11 +31,22 @@ const allSlotsFilled = computed(() =>
   <div class="flex flex-col items-center gap-6 p-4 max-w-md mx-auto">
 
     <!-- Header -->
-    <div class="text-center">
-      <p class="text-sm font-semibold text-indigo-500 uppercase tracking-widest">
-        {{ state.wordEntry.theme }}
-      </p>
-      <p class="text-slate-600 mt-1">{{ state.wordEntry.clue }}</p>
+    <div class="flex flex-col items-center gap-2 w-full">
+      <UnscrambleModeToggle
+        :mode="state.mode"
+        :has-started="hasStarted"
+        @switch="switchMode"
+      />
+      <template v-if="state.mode === 'normal'">
+        <p class="text-sm font-semibold text-indigo-500 uppercase tracking-widest">
+          {{ state.wordEntry.theme }}
+        </p>
+        <p class="text-slate-600 text-center">{{ state.wordEntry.clue }}</p>
+      </template>
+      <template v-else>
+        <p class="text-sm font-semibold text-rose-500 uppercase tracking-widest">Hard Mode</p>
+        <p class="text-slate-400 text-sm text-center">No clues. Figure it out!</p>
+      </template>
     </div>
 
     <!-- Guess rows -->
