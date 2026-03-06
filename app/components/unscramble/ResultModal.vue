@@ -15,7 +15,10 @@ const emit = defineEmits<{
 
 <template>
   <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col items-center gap-4">
+    <div
+      class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col items-center gap-4"
+      style="animation: modal-in 0.3s ease both"
+    >
 
       <div class="text-center">
         <p class="text-4xl mb-1">{{ status === 'won' ? '🎉' : '😢' }}</p>

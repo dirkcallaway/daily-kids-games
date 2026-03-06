@@ -4,7 +4,7 @@ import { useGameState } from '~/composables/useGameState';
 import { useWordOfDay } from '~/composables/useWordOfDay';
 import { useStats } from '~/composables/useStats';
 
-const { state, initGame, placeTile, removeLast, submitGuess } = useGameState();
+const { state, initGame, placeTile, removeLast, submitGuess, useHint, } = useGameState();
 const { wordEntry, dateKey } = useWordOfDay();
 const { getStats } = useStats();
 
@@ -21,6 +21,11 @@ watch(() => state.gameStatus, (status) => {
 onMounted(() => {
   const savedMode = (localStorage.getItem('unscramble-mode-pref') ?? 'normal') as GameMode;
   initGame(savedMode, wordEntry, dateKey);
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown);
 });
 
 function switchMode(newMode: GameMode) {
@@ -40,6 +45,15 @@ const emptyRowCount = computed(() => {
 const allSlotsFilled = computed(() =>
   state.currentGuess.every(v => v !== null)
 );
+
+function handleKeydown(e: KeyboardEvent) {
+  if (state.gameStatus !== 'playing') return;
+  if (e.key === 'Backspace' || e.key === 'Delete') {
+    removeLast();
+  } else if (e.key === 'Enter' && allSlotsFilled.value) {
+    submitGuess();
+  }
+}
 </script>
 
 <template>
@@ -112,6 +126,11 @@ const allSlotsFilled = computed(() =>
       >
         ← Back
       </button>
+      <UnscrambleHintButton
+        v-if="state.mode === 'normal'"
+        :hint-used="state.hintUsed"
+        @hint="useHint"
+      />
       <button
         class="px-4 py-2 rounded-lg font-semibold transition-colors"
         :class="allSlotsFilled

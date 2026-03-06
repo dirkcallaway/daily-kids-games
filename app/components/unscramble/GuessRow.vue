@@ -19,6 +19,7 @@ const props = defineProps<{
         :key="i"
         :letter="gl.letter"
         :state="gl.state"
+        :index="i"
       />
     </template>
 
