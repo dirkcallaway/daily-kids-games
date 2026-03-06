@@ -17,21 +17,21 @@ const maxCount = computed(() =>
   <div class="w-full">
     <div class="flex justify-center gap-4 text-center mb-4">
       <div>
-        <p class="text-2xl font-bold">{{ s.gamesPlayed }}</p>
+        <p class="text-2xl font-bold dark:text-slate-100">{{ s.gamesPlayed }}</p>
         <p class="text-xs text-slate-500 dark:text-slate-400">Played</p>
       </div>
       <div>
-        <p class="text-2xl font-bold">
+        <p class="text-2xl font-bold dark:text-slate-100">
           {{ s.gamesPlayed ? Math.round((s.gamesWon / s.gamesPlayed) * 100) : 0 }}%
         </p>
         <p class="text-xs text-slate-500 dark:text-slate-400">Win %</p>
       </div>
       <div>
-        <p class="text-2xl font-bold">{{ s.currentStreak }}</p>
+        <p class="text-2xl font-bold dark:text-slate-100">{{ s.currentStreak }}</p>
         <p class="text-xs text-slate-500 dark:text-slate-400">Streak</p>
       </div>
       <div>
-        <p class="text-2xl font-bold">{{ s.maxStreak }}</p>
+        <p class="text-2xl font-bold dark:text-slate-100">{{ s.maxStreak }}</p>
         <p class="text-xs text-slate-500 dark:text-slate-400">Best</p>
       </div>
     </div>
