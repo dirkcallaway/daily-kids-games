@@ -1,8 +1,8 @@
 <template>
   <div class="max-w-md mx-auto p-6">
     <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-slate-800">Daily Kids Games</h1>
-      <p class="text-slate-500 mt-2">A new puzzle every day</p>
+      <h1 class="text-3xl font-bold text-slate-800 dark:text-slate-100">Daily Kids Games</h1>
+      <p class="text-slate-500 dark:text-slate-400 mt-2">A new puzzle every day</p>
     </div>
 
     <div class="grid grid-cols-2 gap-4">

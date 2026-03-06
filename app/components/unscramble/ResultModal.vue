@@ -16,28 +16,28 @@ const emit = defineEmits<{
 <template>
   <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
     <div
-      class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col items-center gap-4"
+      class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-sm p-6 flex flex-col items-center gap-4"
       style="animation: modal-in 0.3s ease both"
     >
 
       <div class="text-center">
         <p class="text-4xl mb-1">{{ status === 'won' ? '🎉' : '😢' }}</p>
-        <h2 class="text-xl font-bold text-slate-800">
+        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">
           {{ status === 'won' ? 'You got it!' : 'Better luck tomorrow!' }}
         </h2>
-        <p class="text-slate-500 mt-1">
-          The word was <span class="font-bold text-indigo-600">{{ word }}</span>
+        <p class="text-slate-500 dark:text-slate-400 mt-1">
+          The word was <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ word }}</span>
         </p>
       </div>
 
-      <hr class="w-full border-slate-200" />
+      <hr class="w-full border-slate-200 dark:border-slate-700" />
 
       <UnscrambleStatsPanel :stats="stats" :mode="mode" />
 
-      <p class="text-sm text-slate-400 text-center">Come back tomorrow for a new word!</p>
+      <p class="text-sm text-slate-400 dark:text-slate-500 text-center">Come back tomorrow for a new word!</p>
 
       <button
-        class="w-full py-3 rounded-lg bg-slate-100 text-slate-600 font-semibold text-sm"
+        class="w-full py-3 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-sm"
         @click="emit('close')"
       >
         Close

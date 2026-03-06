@@ -11,7 +11,7 @@ const bgColor = computed(() => {
   if (props.state === 'correct') return 'bg-green-400 border-green-400 text-white';
   if (props.state === 'absent') return 'bg-slate-400 border-slate-400 text-white';
   if (props.state === 'locked') return 'bg-blue-400 border-blue-400 text-white';
-  return props.letter ? 'bg-white border-indigo-400' : 'bg-white border-slate-300';
+  return props.letter ? 'bg-white dark:bg-slate-700 border-indigo-400' : 'bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600';
 });
 
 const animationStyle = computed(() => {
