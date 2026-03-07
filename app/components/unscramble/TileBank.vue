@@ -11,7 +11,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-wrap justify-center gap-2 p-4">
+  <div class="flex justify-center gap-2">
     <UnscrambleLetterTile
       v-for="tile in tiles"
       :key="tile.id"
