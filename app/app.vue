@@ -9,6 +9,7 @@
       <span v-if="isDark" class="text-base leading-none">☀</span>
       <span v-else class="text-base leading-none">🌙</span>
     </button>
+    <Analytics />
     <NuxtRouteAnnouncer />
     <NuxtPage />
   </div>
@@ -16,6 +17,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { Analytics } from '@vercel/analytics/nuxt'
 import { useDarkMode } from '~/composables/useDarkMode'
 
 const { isDark, toggle, init } = useDarkMode()
