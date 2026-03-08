@@ -14,6 +14,13 @@
         :available="true"
       />
       <HubGameCard
+        title="Memory Match"
+        description="Find all the matching pairs"
+        route="/memory"
+        color="teal"
+        :available="true"
+      />
+      <HubGameCard
         title="Mystery Word"
         description="Guess the hidden word"
         route="/mystery"

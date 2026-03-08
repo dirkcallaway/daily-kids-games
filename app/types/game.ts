@@ -53,3 +53,44 @@ export interface AllStats {
   normal: ModeStats
   hard: ModeStats
 }
+
+// --- Memory Match Types ---
+
+export type MemoryCardType = 'emoji' | 'color' | 'letter'
+
+export interface MemoryCardFace {
+  value: string   // emoji char | Tailwind bg class | letter char
+  pairKey: string // canonical match key (uppercase letter for letter pairs)
+}
+
+export interface MemoryCard {
+  id: number
+  face: MemoryCardFace
+  cardType: MemoryCardType
+  isFlipped: boolean
+  isMatched: boolean
+}
+
+export interface MemoryGameState {
+  cards: MemoryCard[]
+  flippedIds: number[]
+  matchedPairKeys: string[]
+  moves: number
+  elapsedSeconds: number
+  gameStatus: 'playing' | 'won'
+  cardType: MemoryCardType
+  dateKey: string
+  statsRecorded: boolean
+  isReplaying: boolean
+  _replayCount: number
+}
+
+export interface MemoryStats {
+  gamesPlayed: number
+  currentStreak: number
+  maxStreak: number
+  bestTime: number | null
+  totalTime: number
+  lastPlayedDate: string | null
+  lastWonDate: string | null
+}
