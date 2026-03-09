@@ -94,3 +94,43 @@ export interface MemoryStats {
   lastPlayedDate: string | null
   lastWonDate: string | null
 }
+
+// --- Word Search Types ---
+
+export type WordSearchDirection = 'right' | 'left' | 'down' | 'up'
+
+export interface WordSearchPlacement {
+  word: string
+  row: number
+  col: number
+  direction: WordSearchDirection
+}
+
+export interface WordSearchCell {
+  letter: string
+  wordIndices: number[]
+  isFound: boolean
+}
+
+export interface WordSearchGameState {
+  theme: string
+  words: string[]
+  clues: string[]
+  grid: WordSearchCell[][]
+  placements: WordSearchPlacement[]
+  foundWords: string[]
+  selectStart: [number, number] | null
+  elapsedSeconds: number
+  gameStatus: 'playing' | 'won'
+  dateKey: string
+  statsRecorded: boolean
+}
+
+export interface WordSearchStats {
+  gamesPlayed: number
+  currentStreak: number
+  maxStreak: number
+  bestTime: number | null
+  lastPlayedDate: string | null
+  lastWonDate: string | null
+}
