@@ -32,7 +32,7 @@
         description="Find the hidden words"
         route="/wordsearch"
         color="green"
-        :available="false"
+        :available="true"
       />
       <HubGameCard
         title="Spelling Bee"
