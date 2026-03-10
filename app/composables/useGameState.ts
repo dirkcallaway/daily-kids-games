@@ -150,11 +150,26 @@ export function useGameState() {
     state.hintUsed = true;
     state.hintPosition = firstNonLocked;
 
-    // Mark the matching tile as used
-    const tile = state.scrambledTiles.find(
-      t => t.letter === correctLetter && !t.isUsed
-    );
-    if (tile) tile.isUsed = true;
+    // Mark the correct tile as used, but only if the slot doesn't already
+    // have the right letter placed (otherwise we'd consume a second tile).
+    const existingTileId = state.currentTileIds[firstNonLocked];
+    const existingTile = existingTileId
+      ? state.scrambledTiles.find(t => t.id === existingTileId)
+      : null;
+
+    if (existingTile && existingTile.letter === correctLetter) {
+      // Slot already has the correct letter — just lock it, no new tile consumed
+    } else {
+      // Release any wrong tile in this slot, then consume the correct one
+      if (existingTile) existingTile.isUsed = false;
+      const correctTile = state.scrambledTiles.find(
+        t => t.letter === correctLetter && !t.isUsed
+      );
+      if (correctTile) {
+        correctTile.isUsed = true;
+        state.currentTileIds[firstNonLocked] = correctTile.id;
+      }
+    }
 
     saveState();
   }
