@@ -180,16 +180,15 @@ export function useWordSearchGame() {
     )
 
     if (match) {
-      // Validate against actual placement (prevents accidental same-string matches)
-      const isForward = selectedWord === match
+      // Validate against actual placement. Check both orientations so palindromes
+      // (e.g. KAYAK) work regardless of which direction the player selected.
       const placement = state.placements.find(p => {
         if (p.word !== match) return false
-        if (isForward) {
-          return p.row === startRow && p.col === startCol && p.direction === direction
-        } else {
-          // Player selected backwards: their start is the word's end
-          return p.row === row && p.col === col && p.direction === oppositeDir(direction)
-        }
+        // Forward: player's start = word's start
+        if (p.row === startRow && p.col === startCol && p.direction === direction) return true
+        // Backward: player's start = word's end
+        if (p.row === row && p.col === col && p.direction === oppositeDir(direction)) return true
+        return false
       })
 
       if (placement) {
