@@ -98,13 +98,6 @@ export function useWordSearchGame() {
     return null
   }
 
-  function oppositeDir(dir: WordSearchDirection): WordSearchDirection {
-    if (dir === 'right') return 'left'
-    if (dir === 'left') return 'right'
-    if (dir === 'down') return 'up'
-    return 'down'
-  }
-
   function extractWord(
     grid: WordSearchCell[][],
     startRow: number,
@@ -180,15 +173,17 @@ export function useWordSearchGame() {
     )
 
     if (match) {
-      // Validate against actual placement. Check both orientations so palindromes
-      // (e.g. KAYAK) work regardless of which direction the player selected.
+      // Validate against actual placement by computing the word's two endpoints
+      // and checking that the player's selection connects them (in either order).
+      // This handles all directions and palindromes without relying on oppositeDir.
       const placement = state.placements.find(p => {
         if (p.word !== match) return false
-        // Forward: player's start = word's start
-        if (p.row === startRow && p.col === startCol && p.direction === direction) return true
-        // Backward: player's start = word's end
-        if (p.row === row && p.col === col && p.direction === oppositeDir(direction)) return true
-        return false
+        const [dRow, dCol] = DIRECTION_DELTAS[p.direction]
+        const wordEndRow = p.row + dRow * (p.word.length - 1)
+        const wordEndCol = p.col + dCol * (p.word.length - 1)
+        const forwardMatch  = startRow === p.row     && startCol === p.col     && row === wordEndRow && col === wordEndCol
+        const backwardMatch = startRow === wordEndRow && startCol === wordEndCol && row === p.row     && col === p.col
+        return forwardMatch || backwardMatch
       })
 
       if (placement) {
