@@ -1,5 +1,5 @@
 import { WORD_LIST } from '~/data/words'
-import { buildWordSearchGrid } from '~/utils/wordSearchGrid'
+import { buildWordSearchGrid, GRID_SIZE } from '~/utils/wordSearchGrid'
 
 const EPOCH = new Date('2026-04-01').getTime()
 const WORDS_PER_PUZZLE = 5
@@ -51,7 +51,7 @@ export function useWordSearchDay() {
   const wordRng = lcgRandom(Math.abs(dayIndex) + 1)
   const shuffled = seededShuffle(themeWords, wordRng)
   const selected = shuffled
-    .filter(e => e.word.length <= 12)
+    .filter(e => e.word.length <= GRID_SIZE)
     .slice(0, WORDS_PER_PUZZLE)
 
   const words = selected.map(e => e.word.toUpperCase())

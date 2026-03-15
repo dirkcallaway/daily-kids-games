@@ -1,6 +1,6 @@
 import type { WordSearchCell, WordSearchPlacement, WordSearchDirection } from '~/types/game'
 
-const GRID_SIZE = 12
+export const GRID_SIZE = 10
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 const DIRECTION_DELTAS: Record<WordSearchDirection, [number, number]> = {
@@ -74,25 +74,45 @@ function doPlace(
   }
 }
 
+// Generate candidates with axis-balanced direction ordering.
+// Directions for the underrepresented axis are tried first so placements
+// naturally alternate between horizontal and vertical across words.
 function generateCandidates(
   word: string,
-  rng: () => number
+  rng: () => number,
+  horizontalCount: number,
+  verticalCount: number
 ): Array<{ row: number; col: number; direction: WordSearchDirection }> {
-  const candidates: Array<{ row: number; col: number; direction: WordSearchDirection }> = []
+  // Prefer the less-used axis; within each axis shuffle the two directions
+  const preferVertical = horizontalCount > verticalCount
+  const preferred:  WordSearchDirection[] = preferVertical ? ['down', 'up']    : ['right', 'left']
+  const fallback:   WordSearchDirection[] = preferVertical ? ['right', 'left'] : ['down', 'up']
 
-  for (const direction of ALL_DIRECTIONS) {
+  const dirOrder = [
+    ...seededShuffle(preferred, rng),
+    ...seededShuffle(fallback,  rng),
+  ]
+
+  const allCandidates: Array<{ row: number; col: number; direction: WordSearchDirection }> = []
+
+  for (const direction of dirOrder) {
     const [dRow, dCol] = DIRECTION_DELTAS[direction]
+    const dirCandidates: Array<{ row: number; col: number; direction: WordSearchDirection }> = []
+
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
         const endR = r + dRow * (word.length - 1)
         const endC = c + dCol * (word.length - 1)
         if (endR < 0 || endR >= GRID_SIZE || endC < 0 || endC >= GRID_SIZE) continue
-        candidates.push({ row: r, col: c, direction })
+        dirCandidates.push({ row: r, col: c, direction })
       }
     }
+
+    // Shuffle positions within each direction, then append the whole group
+    allCandidates.push(...seededShuffle(dirCandidates, rng))
   }
 
-  return seededShuffle(candidates, rng)
+  return allCandidates
 }
 
 function bruteForcePlace(
@@ -129,16 +149,21 @@ export function buildWordSearchGrid(
   const indexed = words.map((w, i) => ({ word: w, origIndex: i }))
   indexed.sort((a, b) => b.word.length - a.word.length)
 
+  let horizontalCount = 0
+  let verticalCount = 0
+
   for (const { word, origIndex } of indexed) {
     if (word.length > GRID_SIZE) continue  // safety guard
 
-    const candidates = generateCandidates(word, rng)
+    const candidates = generateCandidates(word, rng, horizontalCount, verticalCount)
     let placed = false
 
     for (const { row, col, direction } of candidates) {
       if (canPlace(grid, word, row, col, direction)) {
         doPlace(grid, word, origIndex, row, col, direction)
         placements.push({ word, row, col, direction })
+        if (direction === 'right' || direction === 'left') horizontalCount++
+        else verticalCount++
         placed = true
         break
       }
@@ -146,7 +171,11 @@ export function buildWordSearchGrid(
 
     if (!placed) {
       const fallback = bruteForcePlace(grid, word, origIndex)
-      if (fallback) placements.push(fallback)
+      if (fallback) {
+        placements.push(fallback)
+        if (fallback.direction === 'right' || fallback.direction === 'left') horizontalCount++
+        else verticalCount++
+      }
     }
   }
 

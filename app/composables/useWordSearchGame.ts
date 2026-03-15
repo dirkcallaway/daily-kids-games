@@ -122,7 +122,7 @@ export function useWordSearchGame() {
       if (r === endRow && c === endCol) break
       r += dRow
       c += dCol
-      if (r < 0 || r >= 12 || c < 0 || c >= 12) break
+      if (r < 0 || r >= state.grid.length || c < 0 || c >= (state.grid[0]?.length ?? 10)) break
     }
     return result
   }

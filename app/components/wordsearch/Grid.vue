@@ -11,6 +11,7 @@ const emit = defineEmits<{
 }>()
 
 const hoverCell = ref<[number, number] | null>(null)
+const gridSize = computed(() => props.grid[0]?.length ?? 10)
 
 const DIRECTION_DELTAS: Record<WordSearchDirection, [number, number]> = {
   right: [0, 1],
@@ -44,7 +45,7 @@ function isOnLine(
     if (r === er && c === ec) break
     r += dRow
     c += dCol
-    if (r < 0 || r >= 12 || c < 0 || c >= 12) break
+    if (r < 0 || r >= gridSize.value || c < 0 || c >= gridSize.value) break
   }
   return false
 }
@@ -76,7 +77,7 @@ function cellClass(row: number, col: number, cell: WordSearchCell): string {
 <template>
   <div
     class="grid gap-0.5 w-full aspect-square select-none touch-none"
-    :style="{ gridTemplateColumns: 'repeat(12, minmax(0, 1fr))' }"
+    :style="{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }"
     @mouseleave="hoverCell = null"
   >
     <template v-for="(row, rowIdx) in grid" :key="rowIdx">
