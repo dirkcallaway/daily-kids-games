@@ -51,7 +51,7 @@ const isPlaying = computed(() => state.gameStatus === 'playing')
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-6 p-4 max-w-md mx-auto">
+  <div class="flex flex-col items-center gap-3 p-4 max-w-md mx-auto">
 
     <!-- Header -->
     <div class="flex flex-col items-center gap-2 w-full">
@@ -88,7 +88,7 @@ const isPlaying = computed(() => state.gameStatus === 'playing')
     </div>
 
     <!-- Equations -->
-    <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl px-8 py-5">
+    <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl px-6 py-3">
       <EmojimathEquationDisplay
         v-if="state.equations.length"
         :equations="state.equations"

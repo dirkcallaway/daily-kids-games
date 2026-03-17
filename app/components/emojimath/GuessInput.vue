@@ -25,15 +25,15 @@ function onInput(idx: number, e: Event) {
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-4">
+  <div class="flex flex-col items-center gap-3">
     <!-- Emoji input row -->
-    <div class="flex gap-4 flex-wrap justify-center">
+    <div class="flex gap-2 flex-wrap justify-center">
       <div
         v-for="(emoji, i) in emojis"
         :key="i"
-        class="flex flex-col items-center gap-1"
+        class="flex flex-col items-center gap-0.5"
       >
-        <span class="text-3xl">{{ emoji.symbol }}</span>
+        <span class="text-2xl">{{ emoji.symbol }}</span>
         <input
           type="number"
           min="1"
@@ -41,7 +41,7 @@ function onInput(idx: number, e: Event) {
           :value="currentValues[i] ?? ''"
           :disabled="disabled || hintIndex === i"
           :class="[
-            'w-16 h-10 text-center text-lg font-bold rounded-lg border-2 transition-colors',
+            'w-14 h-9 text-center text-base font-bold rounded-lg border-2 transition-colors',
             'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100',
             hintIndex === i
               ? 'border-amber-400 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 cursor-not-allowed'
@@ -53,10 +53,10 @@ function onInput(idx: number, e: Event) {
     </div>
 
     <!-- Buttons -->
-    <div class="flex gap-3">
+    <div class="flex gap-2">
       <button
         :disabled="hintUsed || disabled"
-        class="flex items-center gap-1.5 px-4 py-2 rounded-lg font-semibold text-sm transition-colors"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-lg font-semibold text-sm transition-colors"
         :class="hintUsed || disabled
           ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'
           : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 hover:bg-amber-200'"
@@ -66,7 +66,7 @@ function onInput(idx: number, e: Event) {
       </button>
       <button
         :disabled="!allFilled || disabled"
-        class="px-6 py-2 rounded-lg font-semibold transition-colors"
+        class="px-5 py-1.5 rounded-lg font-semibold transition-colors"
         :class="allFilled && !disabled
           ? 'bg-rose-500 text-white hover:bg-rose-600'
           : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed'"

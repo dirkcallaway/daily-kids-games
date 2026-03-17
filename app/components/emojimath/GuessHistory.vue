@@ -9,26 +9,31 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 w-full">
+  <div class="flex flex-col items-center gap-1 w-full">
+    <!-- Emoji column headers (shown once) -->
+    <div class="flex gap-2 justify-center mb-0.5">
+      <div
+        v-for="(emoji, ei) in emojis"
+        :key="ei"
+        class="w-11 text-center text-xl"
+      >
+        {{ emoji.symbol }}
+      </div>
+    </div>
+
+    <!-- Completed guess rows -->
     <div
       v-for="(guess, gi) in guesses"
       :key="gi"
-      class="flex gap-3 justify-center"
+      class="flex gap-2 justify-center"
     >
       <div
         v-for="(emoji, ei) in emojis"
         :key="ei"
-        class="flex flex-col items-center"
+        class="w-11 h-8 flex items-center justify-center rounded-lg font-bold text-sm text-white"
+        :class="guess.feedback[ei] === 'correct' ? 'bg-green-500' : 'bg-red-400'"
       >
-        <span class="text-xl">{{ emoji.symbol }}</span>
-        <div
-          class="w-12 h-9 flex items-center justify-center rounded-lg font-bold text-sm text-white"
-          :class="guess.feedback[ei] === 'correct'
-            ? 'bg-green-500'
-            : 'bg-red-400'"
-        >
-          {{ guess.values[ei] }}
-        </div>
+        {{ guess.values[ei] }}
       </div>
     </div>
 
@@ -36,16 +41,13 @@ defineProps<{
     <div
       v-for="i in (maxGuesses - guesses.length)"
       :key="`empty-${i}`"
-      class="flex gap-3 justify-center"
+      class="flex gap-2 justify-center"
     >
       <div
         v-for="(emoji, ei) in emojis"
         :key="ei"
-        class="flex flex-col items-center"
-      >
-        <span class="text-xl opacity-0">{{ emoji.symbol }}</span>
-        <div class="w-12 h-9 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700" />
-      </div>
+        class="w-11 h-8 rounded-lg border-2 border-dashed border-slate-200 dark:border-slate-700"
+      />
     </div>
   </div>
 </template>
