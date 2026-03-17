@@ -21,13 +21,6 @@
         :available="true"
       />
       <HubGameCard
-        title="Mystery Word"
-        description="Guess the hidden word"
-        route="/mystery"
-        color="amber"
-        :available="false"
-      />
-      <HubGameCard
         title="Word Search"
         description="Find the hidden words"
         route="/wordsearch"
@@ -35,10 +28,24 @@
         :available="true"
       />
       <HubGameCard
+        title="Emoji Equations"
+        description="Solve the emoji math puzzle"
+        route="/emojimath"
+        color="rose"
+        :available="true"
+      />
+      <HubGameCard
+        title="Mystery Word"
+        description="Guess the hidden word"
+        route="/mystery"
+        color="amber"
+        :available="false"
+      />
+      <HubGameCard
         title="Spelling Bee"
         description="Make words from letters"
         route="/spelling"
-        color="rose"
+        color="amber"
         :available="false"
       />
     </div>
