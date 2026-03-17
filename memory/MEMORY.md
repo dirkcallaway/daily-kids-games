@@ -28,6 +28,14 @@
 - Data: `app/data/memoryCards.ts`
 - Composables: `useMemoryDay.ts`, `useMemoryStats.ts`, `useMemoryGame.ts`
 
+### Emoji Math (`/emojimath`)
+- Easy: 2 emojis, 2 equations (+/−), values 2–12; Hard: 3 emojis, 3 equations (all ops), values 2–10
+- 5 guesses, per-emoji green/red feedback, 1 hint (both modes)
+- Puzzle generation: LCG seed, hard mode uses seed offset +500000, uniqueness verified by brute-force [1..20]
+- Stats: per-mode (reuses AllStats/ModeStats from game.ts), key `emojimath-stats`
+- Mode pref: `emojimath-mode-pref`; state key: `emojimath-state-{dateKey}-{mode}`
+- Data: `app/data/emojiPool.ts`; Composables: `useEmojiMathDay.ts`, `useEmojiMathGame.ts`, `useEmojiMathStats.ts`
+
 ## Key Files
 - `app/types/game.ts` — all TypeScript interfaces
 - `app/assets/css/main.css` — global keyframes (modal-in, reveal, pop)
