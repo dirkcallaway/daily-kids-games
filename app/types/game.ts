@@ -134,3 +134,37 @@ export interface WordSearchStats {
   lastPlayedDate: string | null
   lastWonDate: string | null
 }
+
+// --- Emoji Math Types ---
+
+export type EmojiOp = '+' | '−' | '×' | '÷'
+
+export interface EmojiVar {
+  symbol: string  // e.g. '🐱'
+  value: number   // hidden answer
+}
+
+export interface EmojiEquation {
+  aIdx: number    // index into EmojiVar[]
+  op: EmojiOp
+  bIdx: number
+  result: number
+}
+
+export interface EmojiGuess {
+  values: number[]
+  feedback: ('correct' | 'wrong')[]
+}
+
+export interface EmojiMathGameState {
+  dateKey: string
+  mode: GameMode
+  emojis: EmojiVar[]
+  equations: EmojiEquation[]
+  guesses: EmojiGuess[]
+  currentValues: (number | null)[]
+  gameStatus: 'playing' | 'won' | 'lost'
+  hintUsed: boolean
+  hintIndex: number | null
+  statsRecorded: boolean
+}
