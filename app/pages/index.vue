@@ -35,9 +35,9 @@
         :available="true"
       />
       <HubGameCard
-        title="Hangman"
+        title="Snowman"
         description="Guess the mystery word letter by letter"
-        route="/hangman"
+        route="/snowman"
         color="amber"
         :available="true"
       />

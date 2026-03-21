@@ -135,9 +135,9 @@ export interface WordSearchStats {
   lastWonDate: string | null
 }
 
-// --- Hangman Types ---
+// --- Snowman Types ---
 
-export interface HangmanGameState {
+export interface SnowmanGameState {
   word: string
   theme: string
   clue: string
@@ -147,7 +147,7 @@ export interface HangmanGameState {
   statsRecorded: boolean
 }
 
-export interface HangmanStats {
+export interface SnowmanStats {
   gamesPlayed: number
   gamesWon: number
   currentStreak: number

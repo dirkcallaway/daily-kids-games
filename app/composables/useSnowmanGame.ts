@@ -1,9 +1,9 @@
-import type { HangmanGameState, WordEntry } from '~/types/game';
-import { useHangmanStats } from '~/composables/useHangmanStats';
+import type { SnowmanGameState, WordEntry } from '~/types/game';
+import { useSnowmanStats } from '~/composables/useSnowmanStats';
 
 const MAX_WRONG = 6;
 
-const STATE_PREFIX = 'hangman-state-';
+const STATE_PREFIX = 'snowman-state-';
 
 function stateKey(dateKey: string) {
   return `${STATE_PREFIX}${dateKey}`;
@@ -20,10 +20,10 @@ function cleanOldState(currentDateKey: string) {
   keysToRemove.forEach(k => localStorage.removeItem(k));
 }
 
-export function useHangmanGame() {
-  const { recordResult } = useHangmanStats();
+export function useSnowmanGame() {
+  const { recordResult } = useSnowmanStats();
 
-  const state = reactive<HangmanGameState>({
+  const state = reactive<SnowmanGameState>({
     word: '',
     theme: '',
     clue: '',
@@ -38,10 +38,6 @@ export function useHangmanGame() {
   );
 
   const wrongCount = computed(() => wrongLetters.value.length);
-
-  const correctLetters = computed(() =>
-    state.guessedLetters.filter(l => state.word.includes(l))
-  );
 
   function isLetterGuessed(letter: string) {
     return state.guessedLetters.includes(letter);
@@ -73,7 +69,7 @@ export function useHangmanGame() {
     const saved = localStorage.getItem(stateKey(dateKey));
     if (saved) {
       try {
-        const parsed: HangmanGameState = JSON.parse(saved);
+        const parsed: SnowmanGameState = JSON.parse(saved);
         state.word = parsed.word;
         state.theme = parsed.theme;
         state.clue = parsed.clue;
@@ -123,7 +119,6 @@ export function useHangmanGame() {
     state,
     wrongLetters,
     wrongCount,
-    correctLetters,
     MAX_WRONG,
     isLetterGuessed,
     isLetterCorrect,

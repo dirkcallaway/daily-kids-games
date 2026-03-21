@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { HangmanStats } from '~/types/game';
+import type { SnowmanStats } from '~/types/game';
 
 const props = defineProps<{
-  stats: HangmanStats;
+  stats: SnowmanStats;
 }>();
 
 const winPct = computed(() => {

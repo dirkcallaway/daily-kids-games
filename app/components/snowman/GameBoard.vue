@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useHangmanGame } from '~/composables/useHangmanGame';
+import { useSnowmanGame } from '~/composables/useSnowmanGame';
 import { useWordOfDay } from '~/composables/useWordOfDay';
-import { useHangmanStats } from '~/composables/useHangmanStats';
+import { useSnowmanStats } from '~/composables/useSnowmanStats';
 import { useConfetti } from '~/composables/useConfetti';
 
-const { state, wrongCount, isLetterCorrect, isLetterWrong, MAX_WRONG, initGame, guessLetter } = useHangmanGame();
+const { state, wrongCount, MAX_WRONG, initGame, guessLetter } = useSnowmanGame();
 const { wordEntry, dateKey } = useWordOfDay(50);
-const { getStats } = useHangmanStats();
+const { getStats } = useSnowmanStats();
 const { launchFireworks } = useConfetti();
 
 const showModal = ref(false);
@@ -67,17 +67,17 @@ const gameResult = computed(() => state.gameStatus as 'won' | 'lost');
       {{ triesLeft === 1 ? 'try' : 'tries' }} left
     </p>
 
-    <!-- Hangman figure -->
-    <HangmanFigure :wrong-count="wrongCount" />
+    <!-- Snowman figure -->
+    <SnowmanFigure :wrong-count="wrongCount" />
 
     <!-- Word display -->
-    <HangmanWordDisplay
+    <SnowmanWordDisplay
       :word="state.word"
       :guessed-letters="state.guessedLetters"
     />
 
     <!-- Letter grid -->
-    <HangmanLetterGrid
+    <SnowmanLetterGrid
       :guessed-letters="state.guessedLetters"
       :word="state.word"
       :game-status="state.gameStatus"
@@ -85,10 +85,10 @@ const gameResult = computed(() => state.gameStatus as 'won' | 'lost');
     />
 
     <!-- Stats panel -->
-    <HangmanStatsPanel :stats="currentStats" />
+    <SnowmanStatsPanel :stats="currentStats" />
 
     <!-- Result modal -->
-    <HangmanResultModal
+    <SnowmanResultModal
       v-if="showModal && state.gameStatus !== 'playing'"
       :status="gameResult"
       :word="state.word"

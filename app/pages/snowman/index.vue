@@ -1,5 +1,5 @@
 <template>
   <ClientOnly>
-    <HangmanGameBoard />
+    <SnowmanGameBoard />
   </ClientOnly>
 </template>

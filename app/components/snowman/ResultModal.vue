@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { HangmanStats } from '~/types/game';
+import type { SnowmanStats } from '~/types/game';
 
 const props = defineProps<{
   status: 'won' | 'lost';
   word: string;
-  stats: HangmanStats;
+  stats: SnowmanStats;
 }>();
 
 const emit = defineEmits<{
@@ -24,9 +24,9 @@ const winPct = computed(() => {
       style="animation: modal-in 0.3s ease both"
     >
       <div class="text-center">
-        <p class="text-4xl mb-1">{{ status === 'won' ? '🎉' : '😬' }}</p>
+        <p class="text-4xl mb-1">{{ status === 'won' ? '🎉' : '⛄' }}</p>
         <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100">
-          {{ status === 'won' ? 'You got it!' : 'Better luck tomorrow!' }}
+          {{ status === 'won' ? 'You got it!' : 'The snowman is complete!' }}
         </h2>
         <p v-if="status === 'lost'" class="text-slate-500 dark:text-slate-400 mt-1">
           The word was <span class="font-bold text-amber-500">{{ word }}</span>
@@ -62,7 +62,7 @@ const winPct = computed(() => {
         class="w-full py-3 rounded-lg font-semibold text-sm transition-colors"
         :class="status === 'won'
           ? 'bg-amber-500 hover:bg-amber-400 text-white'
-          : 'bg-slate-500 hover:bg-slate-400 text-white'"
+          : 'bg-sky-500 hover:bg-sky-400 text-white'"
         @click="emit('close')"
       >
         Done

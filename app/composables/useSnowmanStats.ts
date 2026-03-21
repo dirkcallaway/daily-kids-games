@@ -1,8 +1,8 @@
-import type { HangmanStats } from '~/types/game';
+import type { SnowmanStats } from '~/types/game';
 
-const STATS_KEY = 'hangman-stats';
+const STATS_KEY = 'snowman-stats';
 
-function defaultStats(): HangmanStats {
+function defaultStats(): SnowmanStats {
   return {
     gamesPlayed: 0,
     gamesWon: 0,
@@ -13,7 +13,7 @@ function defaultStats(): HangmanStats {
   };
 }
 
-function loadStats(): HangmanStats {
+function loadStats(): SnowmanStats {
   try {
     const raw = localStorage.getItem(STATS_KEY);
     if (raw) return JSON.parse(raw);
@@ -21,11 +21,11 @@ function loadStats(): HangmanStats {
   return defaultStats();
 }
 
-function saveStats(stats: HangmanStats) {
+function saveStats(stats: SnowmanStats) {
   localStorage.setItem(STATS_KEY, JSON.stringify(stats));
 }
 
-export function useHangmanStats() {
+export function useSnowmanStats() {
   function recordResult(won: boolean, dateKey: string) {
     const stats = loadStats();
 
@@ -51,7 +51,7 @@ export function useHangmanStats() {
     saveStats(stats);
   }
 
-  function getStats(): HangmanStats {
+  function getStats(): SnowmanStats {
     return loadStats();
   }
 
