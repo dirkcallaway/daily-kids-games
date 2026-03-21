@@ -28,7 +28,7 @@ const animationStyle = computed(() => {
 
 <template>
   <div
-    class="flex items-center justify-center w-12 h-12 border-2 rounded-lg font-bold text-xl uppercase transition-colors"
+    class="flex items-center justify-center w-full aspect-square border-2 rounded-lg font-bold text-xl uppercase transition-colors"
     :class="bgColor"
     :style="animationStyle"
   >

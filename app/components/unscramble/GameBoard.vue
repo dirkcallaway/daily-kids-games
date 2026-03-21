@@ -89,7 +89,7 @@ function handleKeydown(e: KeyboardEvent) {
     </div>
 
     <!-- Guess rows -->
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col gap-2 w-full">
       <UnscrambleGuessRow
         v-for="(guess, i) in state.guesses"
         :key="i"

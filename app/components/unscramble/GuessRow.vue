@@ -11,7 +11,10 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="flex gap-2 justify-center">
+  <div
+    class="grid gap-2 w-full mx-auto"
+    :style="`grid-template-columns: repeat(${wordLength}, minmax(0, 1fr)); max-width: calc(${wordLength} * 3rem + ${wordLength - 1} * 0.5rem)`"
+  >
     <!-- Completed row -->
     <template v-if="guess">
       <UnscrambleAnswerSlot

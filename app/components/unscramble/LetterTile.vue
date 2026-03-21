@@ -23,7 +23,7 @@ const color = computed(() => {
 
 <template>
   <button
-    class="flex items-center justify-center w-12 h-12 rounded-lg font-bold text-xl uppercase text-white shadow-md transition-all active:scale-90"
+    class="flex items-center justify-center w-full aspect-square rounded-lg font-bold text-xl uppercase text-white shadow-md transition-all active:scale-90"
     :class="[color, tile.isUsed ? 'opacity-0 pointer-events-none' : 'opacity-100']"
     @click="emit('click', tile.id)"
   >
