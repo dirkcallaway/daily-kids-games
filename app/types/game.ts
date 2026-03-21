@@ -135,6 +135,27 @@ export interface WordSearchStats {
   lastWonDate: string | null
 }
 
+// --- Hangman Types ---
+
+export interface HangmanGameState {
+  word: string
+  theme: string
+  clue: string
+  guessedLetters: string[]
+  gameStatus: 'playing' | 'won' | 'lost'
+  dateKey: string
+  statsRecorded: boolean
+}
+
+export interface HangmanStats {
+  gamesPlayed: number
+  gamesWon: number
+  currentStreak: number
+  maxStreak: number
+  lastPlayedDate: string | null
+  lastWonDate: string | null
+}
+
 // --- Emoji Math Types ---
 
 export type EmojiOp = '+' | '−' | '×' | '÷'

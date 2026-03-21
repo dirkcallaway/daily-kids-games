@@ -35,11 +35,11 @@
         :available="true"
       />
       <HubGameCard
-        title="Mystery Word"
-        description="Guess the hidden word"
-        route="/mystery"
+        title="Hangman"
+        description="Guess the mystery word letter by letter"
+        route="/hangman"
         color="amber"
-        :available="false"
+        :available="true"
       />
       <HubGameCard
         title="Spelling Bee"
