@@ -47,8 +47,8 @@ export function useStats() {
       s.guessDistribution[guessCount] =
         (s.guessDistribution[guessCount] ?? 0) + 1;
 
-      const yesterday = new Date(dateKey);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const [y, m, d] = dateKey.split('-').map(Number) as [number, number, number];
+      const yesterday = new Date(y, m - 1, d - 1);
       const yesterdayKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
 
       s.currentStreak =

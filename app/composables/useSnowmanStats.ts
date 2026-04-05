@@ -37,8 +37,8 @@ export function useSnowmanStats() {
     if (won) {
       stats.gamesWon++;
 
-      const yesterday = new Date(dateKey);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const [y, m, d] = dateKey.split('-').map(Number) as [number, number, number];
+      const yesterday = new Date(y, m - 1, d - 1);
       const yesterdayKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
 
       stats.currentStreak = stats.lastWonDate === yesterdayKey ? stats.currentStreak + 1 : 1;

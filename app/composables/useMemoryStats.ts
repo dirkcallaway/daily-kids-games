@@ -40,8 +40,8 @@ export function useMemoryStats() {
       s.bestTime = elapsedSeconds
     }
 
-    const yesterday = new Date(dateKey)
-    yesterday.setDate(yesterday.getDate() - 1)
+    const [yr, mo, dy] = dateKey.split('-').map(Number) as [number, number, number]
+    const yesterday = new Date(yr, mo - 1, dy - 1)
     const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`
 
     s.currentStreak = s.lastWonDate === yKey ? s.currentStreak + 1 : 1
