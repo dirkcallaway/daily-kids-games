@@ -3,7 +3,7 @@ defineProps<{
   title: string;
   description: string;
   route: string;
-  color: 'indigo' | 'amber' | 'green' | 'rose' | 'teal';
+  color: 'indigo' | 'amber' | 'green' | 'rose' | 'teal' | 'violet';
   available: boolean;
 }>();
 </script>
@@ -22,6 +22,7 @@ defineProps<{
         'bg-green-500': color === 'green',
         'bg-rose-500': color === 'rose',
         'bg-teal-500': color === 'teal',
+        'bg-violet-500': color === 'violet',
       }" />
     <div class="p-4 bg-white dark:bg-slate-800 flex-1">
       <h2 class="font-bold text-slate-800 dark:text-slate-100 text-lg">{{ title }}</h2>

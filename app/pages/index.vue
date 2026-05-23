@@ -45,7 +45,7 @@
         title="Simon Says"
         description="Repeat the color pattern"
         route="/simon"
-        color="amber"
+        color="violet"
         :available="true"
       />
     </div>
