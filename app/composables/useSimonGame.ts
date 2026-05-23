@@ -7,8 +7,20 @@ const NORMAL_LENGTH = 8
 const HARD_LENGTH = 10
 const NORMAL_LIVES = 3
 const HARD_LIVES = 1
-const FLASH_MS: Record<GameMode, number> = { normal: 600, hard: 450 }
-const GAP_MS = 250
+const SPEED = {
+  normal: { startFlash: 600, decayFlash: 20, floorFlash: 320, startGap: 250, decayGap: 10, floorGap: 150 },
+  hard:   { startFlash: 450, decayFlash: 30, floorFlash: 200, startGap: 250, decayGap: 15, floorGap: 120 },
+}
+
+function getFlashMs(round: number, mode: GameMode): number {
+  const s = SPEED[mode]
+  return Math.max(s.floorFlash, s.startFlash - (round - 1) * s.decayFlash)
+}
+
+function getGapMs(round: number, mode: GameMode): number {
+  const s = SPEED[mode]
+  return Math.max(s.floorGap, s.startGap - (round - 1) * s.decayGap)
+}
 
 const STATE_PREFIX = 'simon-state-'
 
@@ -172,7 +184,7 @@ export function useSimonGame() {
 
     await delay(400)
 
-    const flashMs = FLASH_MS[state.mode]
+    const flashMs = getFlashMs(state.currentRound, state.mode)
 
     for (let i = 0; i < state.currentRound; i++) {
       const color = sequence[i]!
@@ -180,7 +192,7 @@ export function useSimonGame() {
       playTone(color, flashMs / 1000, muted.value)
       await delay(flashMs)
       activeColor.value = null
-      await delay(GAP_MS)
+      await delay(getGapMs(state.currentRound, state.mode))
     }
 
     state.gameStatus = 'awaiting_input'
