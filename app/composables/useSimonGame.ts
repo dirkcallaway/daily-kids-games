@@ -73,7 +73,7 @@ function playTone(color: SimonColor, duration = 0.35, muted = false) {
     const gain = ctx.createGain()
     osc.connect(gain)
     gain.connect(ctx.destination)
-    osc.frequency.value = COLOR_FREQS[color]
+    osc.frequency.value = COLOR_FREQS[color]!
     osc.type = 'sine'
     gain.gain.setValueAtTime(0.3, ctx.currentTime)
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration)
