@@ -189,3 +189,31 @@ export interface EmojiMathGameState {
   hintIndex: number | null
   statsRecorded: boolean
 }
+
+// --- Simon Says Types ---
+
+export type SimonColor = 0 | 1 | 2 | 3
+
+export interface SimonGameState {
+  dateKey: string
+  mode: GameMode
+  currentRound: number
+  livesLeft: number
+  gameStatus: 'idle' | 'playing_sequence' | 'awaiting_input' | 'won' | 'lost'
+  statsRecorded: boolean
+}
+
+export interface SimonModeStats {
+  gamesPlayed: number
+  gamesWon: number
+  currentStreak: number
+  maxStreak: number
+  bestRound: number
+  lastPlayedDate: string | null
+  lastWonDate: string | null
+}
+
+export interface SimonAllStats {
+  normal: SimonModeStats
+  hard: SimonModeStats
+}

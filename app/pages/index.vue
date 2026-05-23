@@ -42,11 +42,11 @@
         :available="true"
       />
       <HubGameCard
-        title="Spelling Bee"
-        description="Make words from letters"
-        route="/spelling"
+        title="Simon Says"
+        description="Repeat the color pattern"
+        route="/simon"
         color="amber"
-        :available="false"
+        :available="true"
       />
     </div>
   </div>
