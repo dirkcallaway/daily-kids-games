@@ -51,10 +51,15 @@ function getDayIndex(dateKey: string) {
 }
 
 function generateSequence(dayIndex: number, length: number, mode: GameMode): SimonColor[] {
-  let seed = Math.abs(dayIndex) * 1000 + (mode === 'hard' ? 500000 : 0) + 1
+  const modeOffset = mode === 'hard' ? 500000 : 0
+  let seed = (dayIndex + modeOffset) >>> 0
+  seed = (Math.imul(seed ^ (seed >>> 16), 0x45d9f3b)) >>> 0
+  seed = (Math.imul(seed ^ (seed >>> 16), 0x45d9f3b)) >>> 0
+  seed = (seed ^ (seed >>> 16)) >>> 0
+
   const next = () => {
-    seed = (seed * 1664525 + 1013904223) & 0xffffffff
-    return (Math.abs(seed) % 4) as SimonColor
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
+    return (seed % 4) as SimonColor
   }
   return Array.from({ length }, next)
 }
