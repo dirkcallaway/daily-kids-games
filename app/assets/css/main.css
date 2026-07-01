@@ -16,6 +16,23 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* Never allow horizontal scrolling — guards against edge overflow
+   introduced by viewport-fit=cover on notched / rounded-corner phones */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Respect the device safe area (notch, Dynamic Island, rounded corners).
+   viewport-fit=cover renders content edge-to-edge, so we pad it back in.
+   The min() keeps a baseline gutter on phones that report zero insets. */
+body {
+  padding-left: max(env(safe-area-inset-left), 0px);
+  padding-right: max(env(safe-area-inset-right), 0px);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 @keyframes pop {
   0%   { transform: scale(0.8); }
   50%  { transform: scale(1.12); }
