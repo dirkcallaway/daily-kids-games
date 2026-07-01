@@ -162,10 +162,10 @@ function replaySequence() {
       {{ statusMessage }}
     </p>
 
-    <!-- Watch again button (available after first sequence play) -->
+    <!-- Watch again button — always occupies space so the layout below stays fixed -->
     <button
-      v-if="state.gameStatus === 'awaiting_input'"
       class="text-xs text-slate-400 dark:text-slate-500 underline hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+      :class="state.gameStatus === 'awaiting_input' ? '' : 'invisible pointer-events-none'"
       @click="replaySequence"
     >
       Watch again

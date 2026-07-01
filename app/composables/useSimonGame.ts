@@ -57,11 +57,28 @@ function generateSequence(dayIndex: number, length: number, mode: GameMode): Sim
   seed = (Math.imul(seed ^ (seed >>> 16), 0x45d9f3b)) >>> 0
   seed = (seed ^ (seed >>> 16)) >>> 0
 
-  const next = () => {
-    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0
-    return (seed % 4) as SimonColor
+  // mulberry32 PRNG — its output is well-distributed across ALL bits.
+  // (A plain LCG's low 2 bits are near-cyclic, so `seed % 4` produced a
+  // predictable staircase pattern that made sequences feel repetitive.)
+  let a = seed
+  const rand = () => {
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
   }
-  return Array.from({ length }, next)
+
+  // Draw from the top of the [0,1) range and avoid three of the same color
+  // in a row, so patterns stay varied without a fixed cycle.
+  const seq: SimonColor[] = []
+  for (let i = 0; i < length; i++) {
+    let color = Math.floor(rand() * 4) as SimonColor
+    if (i >= 2 && seq[i - 1] === seq[i - 2] && seq[i - 1] === color) {
+      color = ((color + 1) % 4) as SimonColor
+    }
+    seq.push(color)
+  }
+  return seq
 }
 
 let audioCtx: AudioContext | null = null
