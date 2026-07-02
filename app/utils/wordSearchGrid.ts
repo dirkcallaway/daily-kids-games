@@ -1,4 +1,5 @@
 import type { WordSearchCell, WordSearchPlacement, WordSearchDirection } from '~/types/game'
+import { lcgRandom, seededShuffle } from '~/utils/random'
 
 export const GRID_SIZE = 10
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -11,25 +12,6 @@ const DIRECTION_DELTAS: Record<WordSearchDirection, [number, number]> = {
 }
 
 const ALL_DIRECTIONS: WordSearchDirection[] = ['right', 'left', 'down', 'up']
-
-function lcgRandom(seed: number) {
-  let s = (seed >>> 0) || 1
-  return () => {
-    s = (1664525 * s + 1013904223) >>> 0
-    return s / 0x100000000
-  }
-}
-
-function seededShuffle<T>(arr: T[], rng: () => number): T[] {
-  const result = [...arr]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1))
-    const temp = result[i] as T
-    result[i] = result[j] as T
-    result[j] = temp
-  }
-  return result
-}
 
 function makeEmptyGrid(): WordSearchCell[][] {
   return Array.from({ length: GRID_SIZE }, () =>

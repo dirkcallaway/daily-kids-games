@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import type { WordSearchGameState, WordSearchCell, WordSearchPlacement, WordSearchDirection } from '~/types/game'
+import { cleanOldDailyStates, loadJSON, saveJSON } from '~/utils/gameStorage'
 import { useWordSearchStats } from '~/composables/useWordSearchStats'
 import { DIRECTION_DELTAS } from '~/utils/wordSearchGrid'
 
@@ -49,19 +50,9 @@ export function useWordSearchGame() {
     placements: WordSearchPlacement[],
     dateKey: string
   ) {
-    // Clean stale state keys from prior days
-    for (const key of Object.keys(localStorage)) {
-      if (key.startsWith(STATE_PREFIX) && !key.includes(dateKey)) {
-        localStorage.removeItem(key)
-      }
-    }
-
-    const saved = localStorage.getItem(stateKey(dateKey))
-    const loaded: WordSearchGameState = saved
-      ? JSON.parse(saved)
-      : buildFreshState(theme, words, clues, grid, placements, dateKey)
-
-    Object.assign(state, loaded)
+    cleanOldDailyStates(STATE_PREFIX, dateKey)
+    const loaded = loadJSON<WordSearchGameState>(stateKey(dateKey))
+    Object.assign(state, loaded ?? buildFreshState(theme, words, clues, grid, placements, dateKey))
 
     if (state.gameStatus === 'playing' && state.elapsedSeconds > 0) {
       startTimer()
@@ -69,7 +60,7 @@ export function useWordSearchGame() {
   }
 
   function saveState() {
-    localStorage.setItem(stateKey(state.dateKey), JSON.stringify(state))
+    saveJSON(stateKey(state.dateKey), state)
   }
 
   function startTimer() {

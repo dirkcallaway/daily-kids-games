@@ -1,24 +1,7 @@
 import type { EmojiVar, EmojiEquation, EmojiOp, GameMode } from '~/types/game'
 import { EMOJI_POOL } from '~/data/emojiPool'
-
-const EPOCH = new Date('2026-04-01').getTime()
-
-function lcgRandom(seed: number) {
-  let state = (seed >>> 0) || 1
-  return () => {
-    state = (1664525 * state + 1013904223) >>> 0
-    return state / 0x100000000
-  }
-}
-
-function seededShuffle<T>(arr: T[], rng: () => number): T[] {
-  const result = [...arr]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1))
-    const temp = result[i]!; result[i] = result[j]!; result[j] = temp
-  }
-  return result
-}
+import { getTodayKey, getDayIndex } from '~/utils/daily'
+import { lcgRandom, seededShuffle } from '~/utils/random'
 
 function computeResult(a: number, op: EmojiOp, b: number): number {
   switch (op) {
@@ -152,10 +135,8 @@ export function generatePuzzle(dayIndex: number, mode: GameMode): {
 }
 
 export function useEmojiMathDay(mode: GameMode) {
-  const now = new Date()
-  const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  const today = new Date(dateKey).getTime()
-  const dayIndex = Math.floor((today - EPOCH) / 86400000)
+  const dateKey = getTodayKey()
+  const dayIndex = getDayIndex(dateKey)
 
   const { emojis, equations } = generatePuzzle(dayIndex, mode)
 

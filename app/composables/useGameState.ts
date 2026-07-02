@@ -1,6 +1,7 @@
 import { reactive } from 'vue';
 import type { GameState, GameMode, GuessLetter, Tile } from '~/types/game';
 import { scrambleWord } from '~/utils/scramble';
+import { cleanOldDailyStates, loadJSON, saveJSON } from '~/utils/gameStorage';
 import { useStats } from '~/composables/useStats';
 
 const STATE_PREFIX = 'unscramble-state';
@@ -32,20 +33,13 @@ export function useGameState() {
   const { recordResult } = useStats();
 
   function initGame(mode: GameMode, wordEntry: GameState['wordEntry'], dateKey: string) {
-    // Clean up old state keys
-    for (const key of Object.keys(localStorage)) {
-      if (key.startsWith(STATE_PREFIX) && !key.includes(dateKey)) {
-        localStorage.removeItem(key);
-      }
-    }
-
-    const saved = localStorage.getItem(stateKey(dateKey, mode));
-    const loaded: GameState = saved ? JSON.parse(saved) : buildFreshState(mode, wordEntry, dateKey);
-    Object.assign(state, loaded);
+    cleanOldDailyStates(STATE_PREFIX, dateKey);
+    const loaded = loadJSON<GameState>(stateKey(dateKey, mode));
+    Object.assign(state, loaded ?? buildFreshState(mode, wordEntry, dateKey));
   }
 
   function saveState() {
-    localStorage.setItem(stateKey(state.dateKey, state.mode), JSON.stringify(state));
+    saveJSON(stateKey(state.dateKey, state.mode), state);
   }
 
   function placeTile(tileId: string) {

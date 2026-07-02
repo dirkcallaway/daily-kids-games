@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import type { MemoryCard, MemoryCardType, MemoryGameState } from '~/types/game'
+import { cleanOldDailyStates, loadJSON, saveJSON } from '~/utils/gameStorage'
 import { useMemoryStats } from '~/composables/useMemoryStats'
 import { buildReplayCards } from '~/composables/useMemoryDay'
 
@@ -36,19 +37,9 @@ export function useMemoryGame() {
   const { recordResult } = useMemoryStats()
 
   function initGame(freshCards: MemoryCard[], cardType: MemoryCardType, dateKey: string) {
-    // Clean up stale state keys from prior days
-    for (const key of Object.keys(localStorage)) {
-      if (key.startsWith(STATE_PREFIX) && !key.includes(dateKey)) {
-        localStorage.removeItem(key)
-      }
-    }
-
-    const saved = localStorage.getItem(stateKey(dateKey))
-    const loaded: MemoryGameState = saved
-      ? JSON.parse(saved)
-      : buildFreshState(freshCards, cardType, dateKey)
-
-    Object.assign(state, loaded)
+    cleanOldDailyStates(STATE_PREFIX, dateKey)
+    const loaded = loadJSON<MemoryGameState>(stateKey(dateKey))
+    Object.assign(state, loaded ?? buildFreshState(freshCards, cardType, dateKey))
 
     // If game was already won (loaded from storage), don't restart timer
     if (state.gameStatus === 'playing' && state.elapsedSeconds > 0) {
@@ -57,7 +48,7 @@ export function useMemoryGame() {
   }
 
   function saveState() {
-    localStorage.setItem(stateKey(state.dateKey), JSON.stringify(state))
+    saveJSON(stateKey(state.dateKey), state)
   }
 
   function startTimer() {

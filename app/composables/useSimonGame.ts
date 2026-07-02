@@ -1,7 +1,7 @@
 import type { GameMode, SimonColor, SimonGameState } from '~/types/game'
+import { cleanOldDailyStates, loadJSON, saveJSON } from '~/utils/gameStorage'
+import { getDayIndex } from '~/utils/daily'
 import { useSimonStats } from '~/composables/useSimonStats'
-
-const EPOCH = new Date('2026-04-01').getTime()
 
 const NORMAL_LENGTH = 8
 const HARD_LENGTH = 10
@@ -33,21 +33,6 @@ const COLOR_FREQS: Record<number, number> = {
 
 function stateKey(dateKey: string, mode: GameMode) {
   return `${STATE_PREFIX}${dateKey}-${mode}`
-}
-
-function cleanOldStates(dateKey: string) {
-  const keysToRemove: string[] = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key && key.startsWith(STATE_PREFIX) && !key.includes(dateKey)) {
-      keysToRemove.push(key)
-    }
-  }
-  keysToRemove.forEach(k => localStorage.removeItem(k))
-}
-
-function getDayIndex(dateKey: string) {
-  return Math.floor((new Date(dateKey).getTime() - EPOCH) / 86400000)
 }
 
 function generateSequence(dayIndex: number, length: number, mode: GameMode): SimonColor[] {
@@ -160,36 +145,33 @@ export function useSimonGame() {
   )
 
   function persist() {
-    localStorage.setItem(stateKey(state.dateKey, state.mode), JSON.stringify({
+    saveJSON(stateKey(state.dateKey, state.mode), {
       dateKey: state.dateKey,
       mode: state.mode,
       currentRound: state.currentRound,
       livesLeft: state.livesLeft,
       gameStatus: state.gameStatus,
       statsRecorded: state.statsRecorded,
-    }))
+    })
   }
 
   function initGame(dateKey: string, mode: GameMode) {
-    cleanOldStates(dateKey)
+    cleanOldDailyStates(STATE_PREFIX, dateKey)
 
     state.dateKey = dateKey
     state.mode = mode
     sequenceLength = mode === 'hard' ? HARD_LENGTH : NORMAL_LENGTH
     sequence = generateSequence(getDayIndex(dateKey), sequenceLength, mode)
 
-    const saved = localStorage.getItem(stateKey(dateKey, mode))
-    if (saved) {
-      try {
-        const parsed: SimonGameState = JSON.parse(saved)
-        state.currentRound = parsed.currentRound
-        state.livesLeft = parsed.livesLeft
-        state.gameStatus = parsed.gameStatus === 'playing_sequence' || parsed.gameStatus === 'awaiting_input'
-          ? 'idle'
-          : parsed.gameStatus
-        state.statsRecorded = parsed.statsRecorded
-        return
-      } catch {}
+    const parsed = loadJSON<SimonGameState>(stateKey(dateKey, mode))
+    if (parsed) {
+      state.currentRound = parsed.currentRound
+      state.livesLeft = parsed.livesLeft
+      state.gameStatus = parsed.gameStatus === 'playing_sequence' || parsed.gameStatus === 'awaiting_input'
+        ? 'idle'
+        : parsed.gameStatus
+      state.statsRecorded = parsed.statsRecorded
+      return
     }
 
     state.currentRound = 1

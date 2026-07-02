@@ -1,4 +1,5 @@
 import type { GameMode, SimonAllStats, SimonModeStats } from '~/types/game'
+import { createStatsStorage, recordWinStreak } from '~/utils/stats'
 
 const STATS_KEY = 'simon-stats'
 
@@ -14,21 +15,14 @@ function defaultModeStats(): SimonModeStats {
   }
 }
 
-function loadStats(): SimonAllStats {
-  try {
-    const raw = localStorage.getItem(STATS_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return { normal: defaultModeStats(), hard: defaultModeStats() }
-}
-
-function saveStats(stats: SimonAllStats) {
-  localStorage.setItem(STATS_KEY, JSON.stringify(stats))
-}
+const storage = createStatsStorage<SimonAllStats>(STATS_KEY, () => ({
+  normal: defaultModeStats(),
+  hard: defaultModeStats(),
+}))
 
 export function useSimonStats() {
   function recordResult(mode: GameMode, won: boolean, roundReached: number, dateKey: string) {
-    const stats = loadStats()
+    const stats = storage.load()
     const s = stats[mode]
 
     if (s.lastPlayedDate === dateKey) return
@@ -39,23 +33,16 @@ export function useSimonStats() {
 
     if (won) {
       s.gamesWon++
-
-      const [y, m, d] = dateKey.split('-').map(Number) as [number, number, number]
-      const yesterday = new Date(y, m - 1, d - 1)
-      const yesterdayKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`
-
-      s.currentStreak = s.lastWonDate === yesterdayKey ? s.currentStreak + 1 : 1
-      s.maxStreak = Math.max(s.maxStreak, s.currentStreak)
-      s.lastWonDate = dateKey
+      recordWinStreak(s, dateKey)
     } else {
       s.currentStreak = 0
     }
 
-    saveStats(stats)
+    storage.save(stats)
   }
 
   function getStats(): SimonAllStats {
-    return loadStats()
+    return storage.load()
   }
 
   return { recordResult, getStats }
