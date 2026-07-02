@@ -1,33 +1,13 @@
 import { WORD_LIST } from '~/data/words'
 import { buildWordSearchGrid, GRID_SIZE } from '~/utils/wordSearchGrid'
+import { getTodayKey, getDayIndex } from '~/utils/daily'
+import { lcgRandom, seededShuffle } from '~/utils/random'
 
-const EPOCH = new Date('2026-04-01').getTime()
 const WORDS_PER_PUZZLE = 5
 
-function lcgRandom(seed: number) {
-  let s = (seed >>> 0) || 1
-  return () => {
-    s = (1664525 * s + 1013904223) >>> 0
-    return s / 0x100000000
-  }
-}
-
-function seededShuffle<T>(arr: T[], rng: () => number): T[] {
-  const result = [...arr]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1))
-    const temp = result[i] as T
-    result[i] = result[j] as T
-    result[j] = temp
-  }
-  return result
-}
-
 export function useWordSearchDay() {
-  const now = new Date()
-  const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  const today = new Date(dateKey).getTime()
-  const dayIndex = Math.floor((today - EPOCH) / 86400000)
+  const dateKey = getTodayKey()
+  const dayIndex = getDayIndex(dateKey)
 
   // Group words by theme
   const themeMap = new Map<string, typeof WORD_LIST>()

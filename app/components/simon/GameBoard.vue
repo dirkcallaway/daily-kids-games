@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { GameMode } from '~/types/game'
+import { getTodayKey } from '~/utils/daily'
 import { useSimonGame } from '~/composables/useSimonGame'
 import { useSimonStats } from '~/composables/useSimonStats'
 import { useConfetti } from '~/composables/useConfetti'
@@ -42,9 +43,7 @@ const padDisabled = computed(() =>
 )
 
 function loadGame(selectedMode: GameMode) {
-  const now = new Date()
-  const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  initGame(dateKey, selectedMode)
+  initGame(getTodayKey(), selectedMode)
 }
 
 watch(() => state.gameStatus, async (status) => {

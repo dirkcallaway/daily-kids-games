@@ -1,4 +1,5 @@
 import type { SnowmanGameState, WordEntry } from '~/types/game';
+import { cleanOldDailyStates, loadJSON, saveJSON } from '~/utils/gameStorage';
 import { useSnowmanStats } from '~/composables/useSnowmanStats';
 
 const MAX_WRONG = 6;
@@ -7,17 +8,6 @@ const STATE_PREFIX = 'snowman-state-';
 
 function stateKey(dateKey: string) {
   return `${STATE_PREFIX}${dateKey}`;
-}
-
-function cleanOldState(currentDateKey: string) {
-  const keysToRemove: string[] = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key && key.startsWith(STATE_PREFIX) && key !== stateKey(currentDateKey)) {
-      keysToRemove.push(key);
-    }
-  }
-  keysToRemove.forEach(k => localStorage.removeItem(k));
 }
 
 export function useSnowmanGame() {
@@ -52,7 +42,7 @@ export function useSnowmanGame() {
   }
 
   function persist() {
-    localStorage.setItem(stateKey(state.dateKey), JSON.stringify({
+    saveJSON(stateKey(state.dateKey), {
       word: state.word,
       theme: state.theme,
       clue: state.clue,
@@ -60,25 +50,22 @@ export function useSnowmanGame() {
       gameStatus: state.gameStatus,
       dateKey: state.dateKey,
       statsRecorded: state.statsRecorded,
-    }));
+    });
   }
 
   function initGame(wordEntry: WordEntry, dateKey: string) {
-    cleanOldState(dateKey);
+    cleanOldDailyStates(STATE_PREFIX, dateKey);
 
-    const saved = localStorage.getItem(stateKey(dateKey));
-    if (saved) {
-      try {
-        const parsed: SnowmanGameState = JSON.parse(saved);
-        state.word = parsed.word;
-        state.theme = parsed.theme;
-        state.clue = parsed.clue;
-        state.guessedLetters = parsed.guessedLetters;
-        state.gameStatus = parsed.gameStatus;
-        state.dateKey = parsed.dateKey;
-        state.statsRecorded = parsed.statsRecorded;
-        return;
-      } catch {}
+    const parsed = loadJSON<SnowmanGameState>(stateKey(dateKey));
+    if (parsed) {
+      state.word = parsed.word;
+      state.theme = parsed.theme;
+      state.clue = parsed.clue;
+      state.guessedLetters = parsed.guessedLetters;
+      state.gameStatus = parsed.gameStatus;
+      state.dateKey = parsed.dateKey;
+      state.statsRecorded = parsed.statsRecorded;
+      return;
     }
 
     state.word = wordEntry.word.toUpperCase();

@@ -19,10 +19,20 @@
 import { onMounted } from 'vue'
 import { Analytics } from '@vercel/analytics/nuxt'
 import { useDarkMode } from '~/composables/useDarkMode'
+import { getTodayKey } from '~/utils/daily'
 
 const { isDark, toggle, init } = useDarkMode()
 
 onMounted(() => {
   init()
+
+  // Daily puzzles are computed once at page load; if the app stays open
+  // (or a PWA resumes) past midnight, reload so the new day's puzzle appears.
+  const mountedDay = getTodayKey()
+  const checkDayRollover = () => {
+    if (getTodayKey() !== mountedDay) window.location.reload()
+  }
+  document.addEventListener('visibilitychange', checkDayRollover)
+  setInterval(checkDayRollover, 60_000)
 })
 </script>

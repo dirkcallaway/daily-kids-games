@@ -1,27 +1,9 @@
 import { EMOJI_PAIRS, COLOR_PAIRS, LETTER_PAIRS } from '~/data/memoryCards'
 import type { MemoryCardType, MemoryCard } from '~/types/game'
+import { getTodayKey, getDayIndex } from '~/utils/daily'
+import { lcgRandom, seededShuffle } from '~/utils/random'
 
-const EPOCH = new Date('2026-04-01').getTime()
 const CARD_TYPES: MemoryCardType[] = ['emoji', 'color', 'letter']
-
-function lcgRandom(seed: number) {
-  let state = (seed >>> 0) || 1
-  return () => {
-    state = (1664525 * state + 1013904223) >>> 0
-    return state / 0x100000000
-  }
-}
-
-function seededShuffle<T>(arr: T[], rng: () => number): T[] {
-  const result = [...arr]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1))
-    const temp = result[i] as T
-    result[i] = result[j] as T
-    result[j] = temp
-  }
-  return result
-}
 
 export function buildDailyCards(dayIndex: number, cardType: MemoryCardType): MemoryCard[] {
   const pairs =
@@ -73,11 +55,8 @@ export function buildReplayCards(dayIndex: number, cardType: MemoryCardType, rep
 }
 
 export function useMemoryDay() {
-  const now = new Date()
-  const dateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
-  const today = new Date(dateKey).getTime()
-
-  const dayIndex = Math.floor((today - EPOCH) / 86400000)
+  const dateKey = getTodayKey()
+  const dayIndex = getDayIndex(dateKey)
   const safeIndex = ((dayIndex % CARD_TYPES.length) + CARD_TYPES.length) % CARD_TYPES.length
   const cardType: MemoryCardType = CARD_TYPES[safeIndex]!
 

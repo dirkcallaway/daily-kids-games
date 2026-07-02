@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import type { EmojiVar, EmojiEquation, EmojiMathGameState, GameMode } from '~/types/game'
+import { cleanOldDailyStates, loadJSON, saveJSON } from '~/utils/gameStorage'
 import { useEmojiMathStats } from '~/composables/useEmojiMathStats'
 
 const STATE_PREFIX = 'emojimath-state'
@@ -42,23 +43,13 @@ export function useEmojiMathGame() {
     equations: EmojiEquation[],
     dateKey: string,
   ) {
-    // Clean up stale state keys from prior days
-    for (const key of Object.keys(localStorage)) {
-      if (key.startsWith(STATE_PREFIX) && !key.includes(dateKey)) {
-        localStorage.removeItem(key)
-      }
-    }
-
-    const saved = localStorage.getItem(stateKey(dateKey, mode))
-    const loaded: EmojiMathGameState = saved
-      ? JSON.parse(saved)
-      : buildFreshState(emojis, equations, dateKey, mode)
-
-    Object.assign(state, loaded)
+    cleanOldDailyStates(STATE_PREFIX, dateKey)
+    const loaded = loadJSON<EmojiMathGameState>(stateKey(dateKey, mode))
+    Object.assign(state, loaded ?? buildFreshState(emojis, equations, dateKey, mode))
   }
 
   function saveState() {
-    localStorage.setItem(stateKey(state.dateKey, state.mode), JSON.stringify(state))
+    saveJSON(stateKey(state.dateKey, state.mode), state)
   }
 
   function setCurrentValue(emojiIdx: number, value: number | null) {

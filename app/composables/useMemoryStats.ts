@@ -1,34 +1,21 @@
 import type { MemoryStats } from '~/types/game'
+import { createStatsStorage, recordWinStreak } from '~/utils/stats'
 
 const STATS_KEY = 'memory-stats'
 
-function defaultStats(): MemoryStats {
-  return {
-    gamesPlayed: 0,
-    currentStreak: 0,
-    maxStreak: 0,
-    bestTime: null,
-    totalTime: 0,
-    lastPlayedDate: null,
-    lastWonDate: null,
-  }
-}
-
-function loadStats(): MemoryStats {
-  try {
-    const raw = localStorage.getItem(STATS_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return defaultStats()
-}
-
-function saveStats(stats: MemoryStats) {
-  localStorage.setItem(STATS_KEY, JSON.stringify(stats))
-}
+const storage = createStatsStorage<MemoryStats>(STATS_KEY, () => ({
+  gamesPlayed: 0,
+  currentStreak: 0,
+  maxStreak: 0,
+  bestTime: null,
+  totalTime: 0,
+  lastPlayedDate: null,
+  lastWonDate: null,
+}))
 
 export function useMemoryStats() {
   function recordResult(elapsedSeconds: number, dateKey: string) {
-    const s = loadStats()
+    const s = storage.load()
 
     if (s.lastPlayedDate === dateKey) return
 
@@ -40,23 +27,17 @@ export function useMemoryStats() {
       s.bestTime = elapsedSeconds
     }
 
-    const [yr, mo, dy] = dateKey.split('-').map(Number) as [number, number, number]
-    const yesterday = new Date(yr, mo - 1, dy - 1)
-    const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`
+    recordWinStreak(s, dateKey)
 
-    s.currentStreak = s.lastWonDate === yKey ? s.currentStreak + 1 : 1
-    s.maxStreak = Math.max(s.maxStreak, s.currentStreak)
-    s.lastWonDate = dateKey
-
-    saveStats(s)
+    storage.save(s)
   }
 
   function getStats(): MemoryStats {
-    return loadStats()
+    return storage.load()
   }
 
   function getAverageTime(): number | null {
-    const s = loadStats()
+    const s = storage.load()
     if (s.gamesPlayed === 0) return null
     return Math.round(s.totalTime / s.gamesPlayed)
   }

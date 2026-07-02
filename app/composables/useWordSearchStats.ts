@@ -1,33 +1,20 @@
 import type { WordSearchStats } from '~/types/game'
+import { createStatsStorage, recordWinStreak } from '~/utils/stats'
 
 const STATS_KEY = 'wordsearch-stats'
 
-function defaultStats(): WordSearchStats {
-  return {
-    gamesPlayed: 0,
-    currentStreak: 0,
-    maxStreak: 0,
-    bestTime: null,
-    lastPlayedDate: null,
-    lastWonDate: null,
-  }
-}
-
-function loadStats(): WordSearchStats {
-  try {
-    const raw = localStorage.getItem(STATS_KEY)
-    if (raw) return JSON.parse(raw)
-  } catch {}
-  return defaultStats()
-}
-
-function saveStats(stats: WordSearchStats) {
-  localStorage.setItem(STATS_KEY, JSON.stringify(stats))
-}
+const storage = createStatsStorage<WordSearchStats>(STATS_KEY, () => ({
+  gamesPlayed: 0,
+  currentStreak: 0,
+  maxStreak: 0,
+  bestTime: null,
+  lastPlayedDate: null,
+  lastWonDate: null,
+}))
 
 export function useWordSearchStats() {
   function recordResult(elapsedSeconds: number, dateKey: string) {
-    const s = loadStats()
+    const s = storage.load()
 
     if (s.lastPlayedDate === dateKey) return
 
@@ -38,19 +25,13 @@ export function useWordSearchStats() {
       s.bestTime = elapsedSeconds
     }
 
-    const [yr, mo, dy] = dateKey.split('-').map(Number) as [number, number, number]
-    const yesterday = new Date(yr, mo - 1, dy - 1)
-    const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`
+    recordWinStreak(s, dateKey)
 
-    s.currentStreak = s.lastWonDate === yKey ? s.currentStreak + 1 : 1
-    s.maxStreak = Math.max(s.maxStreak, s.currentStreak)
-    s.lastWonDate = dateKey
-
-    saveStats(s)
+    storage.save(s)
   }
 
   function getStats(): WordSearchStats {
-    return loadStats()
+    return storage.load()
   }
 
   return { recordResult, getStats }

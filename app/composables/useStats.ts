@@ -1,4 +1,5 @@
 import type { AllStats, ModeStats, GameMode } from '~/types/game';
+import { createStatsStorage, recordWinStreak } from '~/utils/stats';
 
 const STATS_KEY = 'unscramble-stats';
 
@@ -14,17 +15,10 @@ function defaultModeStats(): ModeStats {
   };
 }
 
-function loadStats(): AllStats {
-  try {
-    const raw = localStorage.getItem(STATS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { normal: defaultModeStats(), hard: defaultModeStats() };
-}
-
-function saveStats(stats: AllStats) {
-  localStorage.setItem(STATS_KEY, JSON.stringify(stats));
-}
+const storage = createStatsStorage<AllStats>(STATS_KEY, () => ({
+  normal: defaultModeStats(),
+  hard: defaultModeStats(),
+}));
 
 export function useStats() {
   function recordResult(
@@ -33,7 +27,7 @@ export function useStats() {
     guessCount: number,
     dateKey: string,
   ) {
-    const stats = loadStats();
+    const stats = storage.load();
     const s = stats[mode];
 
     // Guard against recording the same day twice
@@ -46,24 +40,16 @@ export function useStats() {
       s.gamesWon++;
       s.guessDistribution[guessCount] =
         (s.guessDistribution[guessCount] ?? 0) + 1;
-
-      const [y, m, d] = dateKey.split('-').map(Number) as [number, number, number];
-      const yesterday = new Date(y, m - 1, d - 1);
-      const yesterdayKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
-
-      s.currentStreak =
-        s.lastWonDate === yesterdayKey ? s.currentStreak + 1 : 1;
-      s.maxStreak = Math.max(s.maxStreak, s.currentStreak);
-      s.lastWonDate = dateKey;
+      recordWinStreak(s, dateKey);
     } else {
       s.currentStreak = 0;
     }
 
-    saveStats(stats);
+    storage.save(stats);
   }
 
   function getStats(): AllStats {
-    return loadStats();
+    return storage.load();
   }
 
   return { recordResult, getStats };
